@@ -1,0 +1,76 @@
+{
+  "version": "7",
+  "dialect": "sqlite",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "6",
+      "when": 1787179277560,
+      "tag": "0000_first_victor_mancha",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1787202843049,
+      "tag": "0001_panoramic_power_man",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1787240226534,
+      "tag": "0002_lonely_the_spike",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "6",
+      "when": 1787244832585,
+      "tag": "0003_blushing_thunderbird",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "6",
+      "when": 1787246594198,
+      "tag": "0004_flowery_justin_hammer",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "6",
+      "when": 1787254663724,
+      "tag": "0005_shallow_victor_mancha",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "6",
+      "when": 1787256010819,
+      "tag": "0006_fixed_loki",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "6",
+      "when": 1787260727821,
+      "tag": "0007_orange_norrin_radd",
+      "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "6",
+      "when": 1787293583199,
+      "tag": "0008_ambitious_johnny_storm",
+      "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "6",
+      "when": 1787301322096,
+      "tag": "0009_breezy_robin_chapel",
+      "breakpoints": true
+    }
+  ]
+}
