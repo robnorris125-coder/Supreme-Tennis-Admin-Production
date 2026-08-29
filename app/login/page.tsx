@@ -57,10 +57,10 @@ return (
 <section className="login-layout">
 <div className="login-card">
 <div className="brand">
-<div className="logo">TG</div>
+<div className="logo">ST</div>
 <div>
 <div className="brand-name">
-TENNIS <span>GROWTH</span>
+TENNIS <span>SUPREME</span>
 </div>
 <div className="brand-admin">ADMIN</div>
 </div>
