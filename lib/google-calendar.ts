@@ -55,3 +55,31 @@ export async function addPrivateLessonCalendarEvent(slot:PrivateLessonSlot,booki
   const response=await fetch("https://www.googleapis.com/calendar/v3/calendars/primary/events",{method:"POST",headers:{authorization:`Bearer ${token}`,"content-type":"application/json"},body:JSON.stringify(event)});
   if(!response.ok)return ""; const result=await response.json() as {id?:string}; return result.id??"";
 }
+export async function addGroupSessionCalendarEvent(tenantId:string,session:{coach:string;title:string;venue:string;sessionDate:string;start:string;duration:number;meta?:string}){
+  const coachId=session.coach.trim().toLowerCase();
+  const token=await accessToken(tenantId,coachId);
+  if(!token)return "";
+
+  const [hour,minute]=session.start.split(":").map(Number);
+  const startDate=new Date(`${session.sessionDate}T00:00:00Z`);
+  startDate.setUTCHours(hour,minute,0,0);
+  const endDate=new Date(startDate.getTime()+(Number(session.duration)||60)*60000);
+
+  const event={
+    summary:session.title,
+    location:session.venue,
+    description:["Supreme Tennis group session",session.meta?`Details: ${session.meta}`:""].filter(Boolean).join("\n"),
+    start:{dateTime:startDate.toISOString().slice(0,19),timeZone:"Europe/London"},
+    end:{dateTime:endDate.toISOString().slice(0,19),timeZone:"Europe/London"}
+  };
+
+  const response=await fetch("https://www.googleapis.com/calendar/v3/calendars/primary/events",{
+    method:"POST",
+    headers:{authorization:`Bearer ${token}`,"content-type":"application/json"},
+    body:JSON.stringify(event)
+  });
+
+  if(!response.ok)return "";
+  const result=await response.json() as {id?:string};
+  return result.id??"";
+}

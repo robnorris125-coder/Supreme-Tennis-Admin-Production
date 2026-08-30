@@ -5,6 +5,7 @@ import { getInvoicePdf } from "../invoice/route";
 import { gmailAccessToken, gmailStatus, sendGmailInvoice } from "../../../lib/gmail";
 import { sendTenantEmail, tenantEmailStatus } from "../../../lib/tenant-email";
 import { ensureTenantForRequest } from "../../../lib/tenant";
+import { addGroupSessionCalendarEvent } from "../../../lib/google-calendar";
 
 const now="2026-08-20T08:00:00Z";
 const billingKey=(customerId:string,programmeId:string,termId:string)=>`${customerId}|${programmeId}|${termId}`;
@@ -220,7 +221,7 @@ export async function GET(request:Request){try{await ensureTenantForRequest(requ
 
 export async function POST(request:Request){
   try{
-    await ensureTenantForRequest(request);
+    const { tenantId } = await ensureTenantForRequest(request);
     const db=getDb(); const body=await request.json() as {action:string;payload?:unknown}; const p=(body.payload??{}) as Record<string,unknown>;
     if(body.action==="addCustomer"){
       const row={...p,createdAt:new Date().toISOString()} as typeof customers.$inferInsert;
@@ -253,7 +254,19 @@ export async function POST(request:Request){
         d1.prepare("DELETE FROM customers WHERE id = ?").bind(customerId)
       ]);
     }
-    else if(body.action==="addSession") await db.insert(sessions).values({...p,termId:p.termId??"autumn-2026"} as typeof sessions.$inferInsert);
+    else if(body.action==="addSession"){
+      const session={...p,termId:p.termId??"autumn-2026"} as typeof sessions.$inferInsert;
+      await db.insert(sessions).values(session);
+      await addGroupSessionCalendarEvent(tenantId,{
+        coach:String(session.coach??""),
+        title:String(session.title??""),
+        venue:String(session.venue??""),
+        sessionDate:String(session.sessionDate??""),
+        start:String(session.start??""),
+        duration:Number(session.duration??60),
+        meta:String(session.meta??"")
+      });
+    }
     else if(body.action==="addTerm"){
       const sessionCount=Number(p.sessionCount);
       if(!Number.isInteger(sessionCount)||sessionCount<1||sessionCount>14)throw new Error("A term must contain between 1 and 14 sessions");
