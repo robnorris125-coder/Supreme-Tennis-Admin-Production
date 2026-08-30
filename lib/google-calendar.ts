@@ -14,7 +14,7 @@ export async function calendarAuthorisationUrl(request:Request,tenantId:string,c
   if(!credentials.clientId||!credentials.clientSecret)throw new Error("Google OAuth credentials are not configured");
   const state=crypto.randomUUID();
   await getD1().prepare(`insert into coach_calendar_connections (tenant_id,coach_id,oauth_state,updated_at) values (?,?,?,now()) on conflict (tenant_id,coach_id) do update set oauth_state=excluded.oauth_state,updated_at=now()`).bind(tenantId,coachId,state).run();
-  const redirectUri=`${new URL(request.url).origin}/api/calendar/callback`;
+  const redirectUri= "https://supreme-tennis-admin-production.vercel.app/api/calendar/callback"
   const params=new URLSearchParams({client_id:credentials.clientId,redirect_uri:redirectUri,response_type:"code",scope:"openid email https://www.googleapis.com/auth/calendar.events",access_type:"offline",prompt:"consent",include_granted_scopes:"true",state});
   return `https://accounts.google.com/o/oauth2/v2/auth?${params}`;
 }
@@ -27,7 +27,7 @@ export async function completeCalendarAuthorisation(request:Request){
   if(!connection)throw new Error("Google Calendar authorisation state is invalid");
   const credentials=await platformGoogleCredentials();
   if(!credentials.clientId||!credentials.clientSecret)throw new Error("Google OAuth credentials are not configured");
-  const redirectUri=`${url.origin}/api/calendar/callback`;
+  const redirectUri= "https://supreme-tennis-admin-production.vercel.app/api/calendar/callback"
   const tokenResponse=await fetch("https://oauth2.googleapis.com/token",{method:"POST",headers:{"content-type":"application/x-www-form-urlencoded"},body:new URLSearchParams({code,client_id:credentials.clientId,client_secret:credentials.clientSecret,redirect_uri:redirectUri,grant_type:"authorization_code"})});
   const token=await tokenResponse.json() as {access_token?:string;refresh_token?:string;error_description?:string};
   if(!tokenResponse.ok||!token.access_token||!token.refresh_token)throw new Error(token.error_description||"Google did not return a reusable Calendar connection");
