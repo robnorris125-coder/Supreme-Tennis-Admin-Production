@@ -83,7 +83,7 @@ export async function gmailAuthorisationUrl(request:Request){
   if(!await gmailConfigured())throw new Error("Gmail connection setup is required");
   const state=crypto.randomUUID();
   await saveSetting("gmail_oauth_state",state);
-  const redirectUri=`${new URL(request.url).origin}/api/gmail/callback`;
+  const redirectUri = "https://supreme-tennis-admin-production.vercel.app/api/gmail/callback";
   const params=new URLSearchParams({client_id:credentials.clientId,redirect_uri:redirectUri,response_type:"code",scope:"openid email https://www.googleapis.com/auth/gmail.send",access_type:"offline",prompt:"consent",include_granted_scopes:"true",login_hint:SENDER_EMAIL,state});
   return `https://accounts.google.com/o/oauth2/v2/auth?${params}`;
 }
@@ -91,7 +91,7 @@ export async function gmailAuthorisationUrl(request:Request){
 export async function completeGmailAuthorisation(request:Request){
   const url=new URL(request.url),code=url.searchParams.get("code"),state=url.searchParams.get("state");
   if(!code||!state||state!==await setting("gmail_oauth_state"))throw new Error("Gmail authorisation could not be verified");
-  const credentials=await gmailCredentials(),redirectUri=`${url.origin}/api/gmail/callback`;
+  const credentials=await gmailCredentials(),redirectUri="https://supreme-tennis-admin-production.vercel.app/api/gmail/callback";
   const response=await fetch("https://oauth2.googleapis.com/token",{method:"POST",headers:{"content-type":"application/x-www-form-urlencoded"},body:new URLSearchParams({code,client_id:credentials.clientId,client_secret:credentials.clientSecret,redirect_uri:redirectUri,grant_type:"authorization_code"})});
   const token=await response.json() as {access_token?:string;refresh_token?:string;error_description?:string};
   if(!response.ok||!token.access_token||!token.refresh_token)throw new Error(token.error_description||"Google did not return a reusable Gmail connection");
